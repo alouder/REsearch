@@ -1,31 +1,32 @@
 from itertools import product
 import test
+import scrape
 
-# Dictionary to store all of the codons for each of the amino acids
+# Dictionary to store all of the codons for each of the amino acids (U replaced with T for simplicity)
 amino_acid_codons = {
-	"A": ["GCU", "GCC", "GCA", "GCG"],
-	"R": ["CGU", "CGC", "CGA", "CGG", "AGA", "AGG"],
-	"N": ["AAU", "AAC"],
-	"D": ["GAU", "GAC"],
+	"A": ["GCT", "GCC", "GCA", "GCG"],
+	"R": ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
+	"N": ["AAT", "AAC"],
+	"D": ["GAT", "GAC"],
 	# Add 'B' asparagine OR aspartic acid for ambiguity
-	"C": ["UGU", "UGC"],
+	"C": ["TGT", "TGC"],
 	"Q": ["CAA", "CAG"],
 	"E": ["GAA", "GAG"],
 	# Add 'Z' glutamine OR glutamic acid for ambiguity
-	"G": ["GGU", "GGC", "GGA", "GGG"],
-	"H": ["CAU", "CAC"],
-	"I": ["AUU", "AUC", "AUA"],
-	"L": ["UUA", "UUG", "CUU", "CUC", "CUA", "CUG"],
+	"G": ["GGT", "GGC", "GGA", "GGG"],
+	"H": ["CAT", "CAC"],
+	"I": ["ATT", "ATC", "ATA"],
+	"L": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
 	"K": ["AAA", "AAG"],
-	"M": ["AUG",],
-	"F": ["UUU", "UUC"],
-	"P": ["CCU", "CCC", "CCA", "CCG"],
-	"S": ["UCU", "UCC", "UCA", "UCG", "AGU", "AGC"],
-	"T": ["ACU", "ACC", "ACA", "ACG"],
-	"W": ["UGG",],
-	"Y": ["UAU", "UAC"],
-	"V": ["GUU", "GUC", "GUA", "GUG"],
-	"stop": ["UAA", "UAG", "UGA"]
+	"M": ["ATG",],
+	"F": ["TTT", "TTC"],
+	"P": ["CCT", "CCC", "CCA", "CCG"],
+	"S": ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
+	"T": ["ACT", "ACC", "ACA", "ACG"],
+	"W": ["TGG",],
+	"Y": ["TAT", "TAC"],
+	"V": ["GTT", "GTC", "GTA", "GTG"],
+	"stop": ["TAA", "TAG", "TGA"]
 }
 
 # Find the number of possible codon combinations for a particular amino acid sequence
