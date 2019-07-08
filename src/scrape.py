@@ -1,5 +1,4 @@
-from urllib.request import urlopen
-from urllib.request import Request
+from urllib.request import urlopen, Request
 from bs4 import BeautifulSoup as soup
 
 # Check if an element has multiple a tags
