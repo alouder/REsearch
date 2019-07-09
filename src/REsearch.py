@@ -167,9 +167,6 @@ def main():
 		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
 		for x, y in final_dict.items():
 			print("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
-
-
-		# Ask for another amino acid sequence
 		input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
 
 main()
