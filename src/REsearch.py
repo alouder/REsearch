@@ -120,33 +120,38 @@ def getMatches(codon_list, enz_dic):
 #
 #
 
-input_amino_acid_sequence = input("Enter amino acid squence: ")
-start_time = time.time()
-print("Searching for possible restriction enzymes...\n")
+def main():
+	input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
+	while input_amino_acid_sequence != "q":
+		start_time = time.time()
+		print("Searching for possible restriction enzymes...\n")
 
-codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, amino_acid_codons))
+		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, amino_acid_codons))
 
-neb_enz_seq = scrape.initNebDict()
-mod_enz_seqs = sanitizeSequences(neb_enz_seq)
+		neb_enz_seq = scrape.initNebDict()
+		mod_enz_seqs = sanitizeSequences(neb_enz_seq)
 
-# Narrow down possible enzymes based on length of amino acid sequence
-eliminateEnzymeByLength(mod_enz_seqs, input_amino_acid_sequence)
+		# Narrow down possible enzymes based on length of amino acid sequence
+		eliminateEnzymeByLength(mod_enz_seqs, input_amino_acid_sequence)
 
-absolute_mod_enz_seqs = {}
-for i in mod_enz_seqs:
-	absolute_mod_enz_seqs[i] = joinTuplesList("", buildPossibleSequences(mod_enz_seqs[i], ambiguity))
+		absolute_mod_enz_seqs = {}
+		for i in mod_enz_seqs:
+			absolute_mod_enz_seqs[i] = joinTuplesList("", buildPossibleSequences(mod_enz_seqs[i], ambiguity))
 
-# Narrow down possible enzymes based on base
-checkAllBases(codon_comb_list, absolute_mod_enz_seqs)
+		# Narrow down possible enzymes based on base
+		checkAllBases(codon_comb_list, absolute_mod_enz_seqs)
 
-# Delete keys storing empty lists
-delEmptyKeys(absolute_mod_enz_seqs)
+		# Delete keys storing empty lists
+		delEmptyKeys(absolute_mod_enz_seqs)
 
-# Add matches to a final dictionary
-final_dict = getMatches(codon_comb_list, absolute_mod_enz_seqs)
+		# Add matches to a final dictionary
+		final_dict = getMatches(codon_comb_list, absolute_mod_enz_seqs)
 
-elapsed_time = time.time() - start_time
-print("---- Found %2d applicable enzymes in %.3f seconds ----\n\n" %(len(final_dict), elapsed_time))
-print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
-for x, y in final_dict.items():
-	print("%-15s%-15s\n______________________________\n" %(x + ":", y))
+		elapsed_time = time.time() - start_time
+		print("---- Found %2d applicable enzymes in %.3f seconds ----\n\n" %(len(final_dict), elapsed_time))
+		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
+		for x, y in final_dict.items():
+			print("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+		input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
+
+main()
