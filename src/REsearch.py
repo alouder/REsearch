@@ -1,53 +1,9 @@
 from itertools import product
-import time, re, test, scrape
-# import test
-# import scrape
+import time, re, test, scrape, immutable
 
-# Dictionary to store all of the codons for each of the amino acids (U replaced with T for simplicity)
-amino_acid_codons = {
-	"A": ["GCT", "GCC", "GCA", "GCG"],
-	"R": ["CGT", "CGC", "CGA", "CGG", "AGA", "AGG"],
-	"N": ["AAT", "AAC"],
-	"D": ["GAT", "GAC"],
-	# Add 'B' asparagine OR aspartic acid for ambiguity
-	"C": ["TGT", "TGC"],
-	"Q": ["CAA", "CAG"],
-	"E": ["GAA", "GAG"],
-	# Add 'Z' glutamine OR glutamic acid for ambiguity
-	"G": ["GGT", "GGC", "GGA", "GGG"],
-	"H": ["CAT", "CAC"],
-	"I": ["ATT", "ATC", "ATA"],
-	"L": ["TTA", "TTG", "CTT", "CTC", "CTA", "CTG"],
-	"K": ["AAA", "AAG"],
-	"M": ["ATG",],
-	"F": ["TTT", "TTC"],
-	"P": ["CCT", "CCC", "CCA", "CCG"],
-	"S": ["TCT", "TCC", "TCA", "TCG", "AGT", "AGC"],
-	"T": ["ACT", "ACC", "ACA", "ACG"],
-	"W": ["TGG",],
-	"Y": ["TAT", "TAC"],
-	"V": ["GTT", "GTC", "GTA", "GTG"],
-	"stop": ["TAA", "TAG", "TGA"]
-}
-
-# Dictionary to store all bases that correspond to symbols that represent ambiguity
-ambiguity = {
-	"G": ["G"],
-	"C": ["C"],
-	"A": ["A"],
-	"T": ["T"],
-	"R": ["G", "A"],
-	"Y": ["C", "T"],
-	"M": ["A", "C"],
- 	"K": ["G", "T"],
-	"S": ["G", "C"],
-	"W": ["A", "T"],
-	"B": ["C", "G", "T"],
-	"D": ["A", "G", "T"],
-	"H": ["A", "C", "T"],
-	"V": ["A", "C", "G"],
-	"N": ["G", "C", "A", "T"] #["N"]
-}
+# Establish varibles for immutable data sets
+amino_acid_codons = immutable.amino_acid_codons
+ambiguity = immutable.ambiguity
 
 # Find the number of possible codon combinations for a particular amino acid sequence
 # Return integer
@@ -122,26 +78,54 @@ def eliminateEnzymeByLength(enz_dict, amino_acid_sequence):
 	for i in toDel:
 		del enz_dict[i]
 
-# Driver code
+# Return modified dictionary to hold the RE recognition sequence stirngs (and corresponding REs) with out cleavage site indicator (for processing).
+# Palindromic and non-palindromic enzymes are distinguished.
+def sanitizeSequences(initial_dic):
+	mod_enz_seqs = {}
+	for i in initial_dic:
+		if not isPalindromic(initial_dic[i]):
+			mod = re.sub("/", "", initial_dic[i])
+			mod_enz_seqs[i] = mod
+		else:
+			mod = splitNonPalindromic(initial_dic[i])
+			mod_enz_seqs[i] = mod
+	return mod_enz_seqs
+
+# Delete keys of a dictionary that have values which are empty lists
+def delEmptyKeys(dic):
+	toDel = []
+	for i in dic:
+		if len(dic[i]) == 0:
+			toDel.append(i)
+	for i in toDel:
+		del dic[i]
+
+def getMatches(codon_list, enz_dic):
+	final_dict = {}
+	for i in codon_list:
+		for k in enz_dic:
+			for v in enz_dic[k]:
+				if v in i:
+					final_dict[k] = i
+	return final_dict
+
+
+#
+#
+###############
+# Driver code #
+###############
+#
+#
+
 input_amino_acid_sequence = input("Enter amino acid squence: ")
 start_time = time.time()
 print("Searching for possible restriction enzymes...\n")
 
 codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, amino_acid_codons))
 
-# Establish var from restriction enzyme dictionary in scrape.py (###TO BE MODULARIZED###)
-neb_enz_seq = scrape.neb_enz_seq_dict
-
-# Modified dictionaries to hold the RE recognition sequence stirngs (and corresponding REs) with out cleavage site indicator (for processing).
-# Palindromic and non-palindromic enzymes are distinguished.
-mod_enz_seqs = {}
-for i in neb_enz_seq:
-	if not isPalindromic(neb_enz_seq[i]):
-		mod = re.sub("/", "", neb_enz_seq[i])
-		mod_enz_seqs[i] = mod
-	else:
-		mod = splitNonPalindromic(neb_enz_seq[i])
-		mod_enz_seqs[i] = mod
+neb_enz_seq = scrape.initNebDict()
+mod_enz_seqs = sanitizeSequences(neb_enz_seq)
 
 # Narrow down possible enzymes based on length of amino acid sequence
 eliminateEnzymeByLength(mod_enz_seqs, input_amino_acid_sequence)
@@ -154,23 +138,12 @@ for i in mod_enz_seqs:
 checkAllBases(codon_comb_list, absolute_mod_enz_seqs)
 
 # Delete keys storing empty lists
-toDel = []
-for i in absolute_mod_enz_seqs:
-	if len(absolute_mod_enz_seqs[i]) == 0:
-		toDel.append(i)
-for i in toDel:
-	del absolute_mod_enz_seqs[i]
+delEmptyKeys(absolute_mod_enz_seqs)
 
 # Add matches to a final dictionary
-final_dict = {}
-for i in codon_comb_list:
-	for k in absolute_mod_enz_seqs:
-		for v in absolute_mod_enz_seqs[k]:
-			if v in i:
-				final_dict[k] = i
+final_dict = getMatches(codon_comb_list, absolute_mod_enz_seqs)
 
 elapsed_time = time.time() - start_time
-# print("---- Found " + str(len(final_dict)) + " applicable enzymes in " + str(elapsed_time) + " seconds----\n\n")
 print("---- Found %2d applicable enzymes in %.3f seconds ----\n\n" %(len(final_dict), elapsed_time))
 print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
 for x, y in final_dict.items():
