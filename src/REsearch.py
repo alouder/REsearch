@@ -46,6 +46,19 @@ def splitNonPalindromic(seq):
 			return temp_list[1]
 	return re.split("\(", seq)[0]
 
+# Return modified dictionary to hold the RE recognition sequence stirngs (and corresponding REs) with out cleavage site indicator (for processing).
+# Palindromic and non-palindromic enzymes are distinguished.
+def sanitizeSequences(initial_dic):
+	mod_enz_seqs = {}
+	for i in initial_dic:
+		if not isPalindromic(initial_dic[i]):
+			mod = re.sub("/", "", initial_dic[i])
+			mod_enz_seqs[i] = mod
+		else:
+			mod = splitNonPalindromic(initial_dic[i])
+			mod_enz_seqs[i] = mod
+	return mod_enz_seqs
+
 # Eliminate certain enzymes based on whether or not a given base is present in the amino acid sequence	
 def eliminateEnzymeByBase(codon_list, enz_dict, base):
 	base_present = False
@@ -78,19 +91,6 @@ def eliminateEnzymeByLength(enz_dict, amino_acid_sequence):
 	for i in toDel:
 		del enz_dict[i]
 
-# Return modified dictionary to hold the RE recognition sequence stirngs (and corresponding REs) with out cleavage site indicator (for processing).
-# Palindromic and non-palindromic enzymes are distinguished.
-def sanitizeSequences(initial_dic):
-	mod_enz_seqs = {}
-	for i in initial_dic:
-		if not isPalindromic(initial_dic[i]):
-			mod = re.sub("/", "", initial_dic[i])
-			mod_enz_seqs[i] = mod
-		else:
-			mod = splitNonPalindromic(initial_dic[i])
-			mod_enz_seqs[i] = mod
-	return mod_enz_seqs
-
 # Delete keys of a dictionary that have values which are empty lists
 def delEmptyKeys(dic):
 	toDel = []
@@ -100,6 +100,8 @@ def delEmptyKeys(dic):
 	for i in toDel:
 		del dic[i]
 
+# Check all enzyme recognition sequence combinations against all codon combinations
+# Return dictionary with enzyme name as key and codon combination as value
 def getMatches(codon_list, enz_dic):
 	final_dict = {}
 	for i in codon_list:
