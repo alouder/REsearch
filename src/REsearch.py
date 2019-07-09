@@ -1,4 +1,5 @@
 from itertools import product
+from os.path import expanduser
 import time, re, test, scrape, immutable
 
 # Establish varibles for immutable data sets
@@ -112,16 +113,12 @@ def getMatches(codon_list, enz_dic):
 	return final_dict
 
 # Write dictionary to a text file in format
-def writeDictToFile(fname, dic):
-	if fname[-4] == "." and fname[-4:] != ".txt":
-		print("--- ERROR: Output can only be written to a text (.txt) file ---")
-		return
-	elif fname[-4] != ".":
-		fname += ".txt"
-	else:
-		with open(fname, "w") as file:
-			for x, y in dic:
-				file.write("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+def writeDictToFile(fname, dic, sequence):
+	with open(fname, "w") as file:
+		file.write("Amino acid sequence entered: " + sequence + "\n\n")
+		file.write("%-15s%-15s\n______________________________\n\n" %("Enzyme:", "Sequence:"))
+		for x, y in dic.items():
+			file.write("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
 
 
 #
@@ -169,9 +166,24 @@ def main():
 		print("---- Found %2d applicable enzymes in %.3f seconds ----\n\n" %(len(final_dict), elapsed_time))
 		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
 		for x, y in final_dict.items():
-			print("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+			print("%-15s%-15s\n______________________________\n" %(x + ":", y))
 
-		input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
+		# Check to see if final_dict should be written to a file. If so, write to file.
+		ask_to_write = input("Would you like to write the results to a file (Y/n)? ")
+		ask_to_write = ask_to_write.upper()
+		if ask_to_write == "Y":
+			fname = input("Enter a name for the file: ")
+			while "." in fname and fname[-4:] != ".txt":
+				print("--- ERROR: Output can only be written to a text (.txt) file ---")
+				fname = input("Enter a name for the file: ")
+			if "." not in fname:
+				fname += ".txt"
+			home = expanduser("~")
+			fname = home + "\\Documents\\" + fname
+			writeDictToFile(fname, final_dict, input_amino_acid_sequence)
+			print("Results written to: " + fname)
+
+		input_amino_acid_sequence = input("\nEnter amino acid squence (q to quit): ")
 		input_amino_acid_sequence = input_amino_acid_sequence.upper()
 
 main()
