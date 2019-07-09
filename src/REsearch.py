@@ -121,10 +121,13 @@ def getMatches(codon_list, enz_dic):
 #
 
 def main():
+
 	input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
-	while input_amino_acid_sequence != "q":
+	input_amino_acid_sequence = input_amino_acid_sequence.upper()
+
+	while input_amino_acid_sequence != "Q":
 		start_time = time.time()
-		print("Searching for possible restriction enzymes...\n")
+		print("\nSearching for possible restriction enzymes...\n")
 
 		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, amino_acid_codons))
 
@@ -155,6 +158,8 @@ def main():
 		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
 		for x, y in final_dict.items():
 			print("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+
 		input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
+		input_amino_acid_sequence = input_amino_acid_sequence.upper()
 
 main()
