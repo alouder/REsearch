@@ -147,7 +147,10 @@ def main():
 		# Add matches to a final dictionary
 		final_dict = getMatches(codon_comb_list, absolute_mod_enz_seqs)
 
+		# Total processing time
 		elapsed_time = time.time() - start_time
+
+		# Display to user
 		print("---- Found %2d applicable enzymes in %.3f seconds ----\n\n" %(len(final_dict), elapsed_time))
 		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
 		for x, y in final_dict.items():
