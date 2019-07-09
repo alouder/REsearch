@@ -111,6 +111,18 @@ def getMatches(codon_list, enz_dic):
 					final_dict[k] = i
 	return final_dict
 
+# Write dictionary to a text file in format
+def writeDictToFile(fname, dic):
+	if fname[-4] == "." and fname[-4:] != ".txt":
+		print("--- ERROR: Output can only be written to a text (.txt) file ---")
+		return
+	elif fname[-4] != ".":
+		fname += ".txt"
+	else:
+		with open(fname, "w") as file:
+			for x, y in dic:
+				file.write("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+
 
 #
 #
@@ -155,6 +167,9 @@ def main():
 		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
 		for x, y in final_dict.items():
 			print("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+
+
+		# Ask for another amino acid sequence
 		input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
 
 main()
