@@ -25,7 +25,7 @@ Finding viable restriction enzymes from NEB given an amino acid sequence.
   - `pip install -r requirements.txt`
   
 ## Running the Program
-To run the program, activate the virtual environment and run REsearch.py
+To run the program, activate the virtual environment and run REsearch.py in REsearch/src/
 
 ## Reminders
 - Remember to activate the virtual environment BEFORE installing python packages with pip, and before running the program
