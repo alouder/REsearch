@@ -3,8 +3,8 @@ from os.path import expanduser
 import time, re, test, scrape, immutable
 
 # Establish varibles for immutable data sets
-amino_acid_codons = immutable.amino_acid_codons
-ambiguity = immutable.ambiguity
+amino_acid_codons = immutable.Immutable.amino_acid_codons
+ambiguity = immutable.Immutable.ambiguity
 
 # Find the number of possible codon combinations for a particular amino acid sequence
 # Return integer
@@ -191,11 +191,14 @@ def main():
 				fname = input("Enter a name for the file: ")
 			if "." not in fname:
 				fname += ".txt"
+			# Find user's home directory
 			home = expanduser("~")
+			# Default to Documents directory
 			fname = home + "\\Documents\\" + fname
 			writeDictToFile(fname, final_dict, input_amino_acid_sequence)
 			print("Results written to: " + fname)
 
+		# Ask for another amino acid sequence
 		input_amino_acid_sequence = input("\nEnter amino acid squence (q to quit): ")
 		input_amino_acid_sequence = input_amino_acid_sequence.upper()
 
