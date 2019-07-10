@@ -1,6 +1,6 @@
 from itertools import product
 from os.path import expanduser
-import time, re, test, scrape, immutable
+import platform, time, re, test, scrape, immutable
 
 # Establish instance of Immutable class in immutable.py for accessing inititial data sets
 initial_data = immutable.Immutable()
@@ -192,8 +192,11 @@ def main():
 				fname += ".txt"
 			# Find user's home directory
 			home = expanduser("~")
-			# Default to Documents directory
-			fname = home + "\\Documents\\" + fname
+			# Default to Documents directory -- Case for Windows and Linux\Mac users
+			if platform.system() == "Windows":
+				fname = home + "\\Documents\\" + fname
+			else:
+				fname = home + "/Documents/" + fname
 			writeDictToFile(fname, final_dict, input_amino_acid_sequence)
 			print("Results written to: " + fname)
 
