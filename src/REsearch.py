@@ -2,9 +2,7 @@ from itertools import product
 from os.path import expanduser
 import time, re, test, scrape, immutable
 
-# Establish varibles for immutable data sets
-# amino_acid_codons = immutable.Immutable.amino_acid_codons
-# ambiguity = immutable.Immutable.ambiguity
+# Establish instance of Immutable class in immutable.py for accessing inititial data sets
 initial_data = immutable.Immutable()
 
 # Find the number of possible codon combinations for a particular amino acid sequence
