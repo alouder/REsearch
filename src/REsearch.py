@@ -116,9 +116,9 @@ def getMatches(codon_list, enz_dic):
 def writeDictToFile(fname, dic, sequence):
 	with open(fname, "w") as file:
 		file.write("Amino acid sequence entered: " + sequence + "\n\n")
-		file.write("%-15s%-15s\n______________________________\n\n" %("Enzyme:", "Sequence:"))
+		file.write("%-15s%-15s%-15s%-15s\n____________________________________________________________\n\n" %("Enzyme:", "Sequence:", "Size:", "Price"))
 		for x, y in dic.items():
-			file.write("%-15s%-15s\n______________________________\n\n" %(x + ":", y))
+			file.write("%-15s%-15s%-15s%-15s\n____________________________________________________________\n\n" %(x + ":", y[0], y[1], y[2]))
 
 
 #
@@ -135,12 +135,13 @@ def main():
 	input_amino_acid_sequence = input_amino_acid_sequence.upper()
 
 	while input_amino_acid_sequence != "Q":
+		# Mark start time for processing (finding matches)
 		start_time = time.time()
-		print("\nSearching for possible restriction enzymes...\n")
+		print("\nSearching for possible restriction enzymes...")
 
 		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, amino_acid_codons))
 
-		neb_enz_seq = scrape.initNebDict()
+		neb_enz_seq = scrape.initNebSeqDict()
 		mod_enz_seqs = sanitizeSequences(neb_enz_seq)
 
 		# Narrow down possible enzymes based on length of amino acid sequence
@@ -158,15 +159,27 @@ def main():
 
 		# Add matches to a final dictionary
 		final_dict = getMatches(codon_comb_list, absolute_mod_enz_seqs)
-
-		# Total processing time
+		# Total processing time for finding enzymes
 		elapsed_time = time.time() - start_time
+		print("---- Found %2d applicable enzyme(s) in %.3f seconds ----\n" %(len(final_dict), elapsed_time))
+		print("Searching for prices of enzymes...")
+		# Mark start time for finding prices
+		start_time = time.time()
+		# Get prices of only the enzymes in final dictionary
+		neb_price = scrape.initNebPriceDict(final_dict)
+		# Total processing time for finding prices
+		elapsed_time = time.time() - start_time
+		print("---- Found prices for %2d enzymes in %.3f seconds ----\n" %(len(final_dict), elapsed_time))
+
+		# Combine enzyme/sequence dictionary and enzyme/price dictionary
+		for i in final_dict:
+			final_dict[i] = (final_dict[i], neb_price[i][0], neb_price[i][1])
+		del neb_price
 
 		# Display to user
-		print("---- Found %2d applicable enzymes in %.3f seconds ----\n\n" %(len(final_dict), elapsed_time))
-		print("%-15s%-15s\n______________________________\n" %("Enzyme:", "Sequence:"))
+		print("%-15s%-15s%-15s%-15s\n____________________________________________________________\n" %("Enzyme:", "Sequence:", "Size:", "Price:"))
 		for x, y in final_dict.items():
-			print("%-15s%-15s\n______________________________\n" %(x + ":", y))
+			print("%-15s%-15s%-15s%-15s\n____________________________________________________________\n" %(x + ":", y[0], y[1], y[2]))
 
 		# Check to see if final_dict should be written to a file. If so, write to file.
 		ask_to_write = input("Would you like to write the results to a file (Y/n)? ")
