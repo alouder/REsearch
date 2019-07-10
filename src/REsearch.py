@@ -3,15 +3,16 @@ from os.path import expanduser
 import time, re, test, scrape, immutable
 
 # Establish varibles for immutable data sets
-amino_acid_codons = immutable.Immutable.amino_acid_codons
-ambiguity = immutable.Immutable.ambiguity
+# amino_acid_codons = immutable.Immutable.amino_acid_codons
+# ambiguity = immutable.Immutable.ambiguity
+initial_data = immutable.Immutable()
 
 # Find the number of possible codon combinations for a particular amino acid sequence
 # Return integer
 def numCombinations(amino_acid_sequence):
 	comb = 1
 	for i in amino_acid_sequence:
-		comb *= len(amino_acid_codons[i])
+		comb *= len(initial_data.amino_acid_codons[i])
 	return comb
 
 # Build all possible combinations for a sequence using itertools.
@@ -139,7 +140,7 @@ def main():
 		start_time = time.time()
 		print("\nSearching for possible restriction enzymes...")
 
-		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, amino_acid_codons))
+		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, initial_data.amino_acid_codons))
 
 		neb_enz_seq = scrape.initNebSeqDict()
 		mod_enz_seqs = sanitizeSequences(neb_enz_seq)
@@ -149,7 +150,7 @@ def main():
 
 		absolute_mod_enz_seqs = {}
 		for i in mod_enz_seqs:
-			absolute_mod_enz_seqs[i] = joinTuplesList("", buildPossibleSequences(mod_enz_seqs[i], ambiguity))
+			absolute_mod_enz_seqs[i] = joinTuplesList("", buildPossibleSequences(mod_enz_seqs[i], initial_data.ambiguity))
 
 		# Narrow down possible enzymes based on base
 		checkAllBases(codon_comb_list, absolute_mod_enz_seqs)
