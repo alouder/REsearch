@@ -16,7 +16,7 @@ Finding viable restriction enzymes from NEB given an amino acid sequence.
   
 #### Windows
 - Install Python virtual environment:
-  - `python -m pip install --user virtualenv`
+  - `python -m pip install virtualenv`
 - Create a virtual environment within the REsearch root directory:
   - `python -m venv env`
 - Activate the virtual enviornment:
