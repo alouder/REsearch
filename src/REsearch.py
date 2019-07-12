@@ -1,6 +1,6 @@
 from itertools import product
 from os.path import expanduser
-import platform, time, re, test, scrape, immutable
+import threading, platform, time, re, test, scrape, immutable
 
 # Establish instance of Immutable class in immutable.py for accessing inititial data sets
 initial_data = immutable.Immutable()
@@ -119,6 +119,16 @@ def writeDictToFile(fname, dic, sequence):
 		for x, y in dic.items():
 			file.write("%-15s%-15s%-15s%-15s\n____________________________________________________________\n\n" %(x + ":", y[0], y[1], y[2]))
 
+# Create N threads for requesting pages as defined in scrape.initNebPriceDict,
+# where N is the number of items in the final dictionary.
+def threadRequests(dic):
+	threads = []
+	for name in dic:
+		t = threading.Thread(target=scrape.initNebPriceDict, args=(name,))
+		t.start()
+		threads.append(t)
+	for t in threads:
+		t.join()
 
 #
 #
@@ -164,8 +174,9 @@ def main():
 		print("Searching for prices of enzymes...")
 		# Mark start time for finding prices
 		start_time = time.time()
+		threadRequests(final_dict)
 		# Get prices of only the enzymes in final dictionary
-		neb_price = scrape.initNebPriceDict(final_dict)
+		neb_price = scrape.neb_price
 		# Total processing time for finding prices
 		elapsed_time = time.time() - start_time
 		print("---- Found prices for %2d enzymes in %.3f seconds ----\n" %(len(final_dict), elapsed_time))
@@ -203,5 +214,4 @@ def main():
 		# Ask for another amino acid sequence
 		input_amino_acid_sequence = input("\nEnter amino acid squence (q to quit): ")
 		input_amino_acid_sequence = input_amino_acid_sequence.upper()
-
 main()
