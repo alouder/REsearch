@@ -5,6 +5,36 @@ import threading, platform, time, re, test, scrape, immutable
 # Establish instance of Immutable class in immutable.py for accessing inititial data sets
 initial_data = immutable.Immutable()
 
+# Validate the amino acid sequence entered by the user.
+# Return validated string
+def getAminoAcid():
+	input_amino_acid_sequence = input("Enter amino acid sequence (0 to quit): ")
+	input_amino_acid_sequence = input_amino_acid_sequence.upper()
+	valid = True
+	while valid == True and input_amino_acid_sequence != '0':
+		for i in input_amino_acid_sequence:
+			if i in initial_data.amino_acid_codons:
+				pass
+			else:
+				valid = False
+		break
+	while valid == False  and input_amino_acid_sequence != '0':
+		print("---- ERROR: Invalid amino acid sequence ----\nEnter a string of characters with no spaces that correspond to conventional amino acid symbols.\n")
+		input_amino_acid_sequence = input("Enter amino acid sequence (0 to quit): ")
+		input_amino_acid_sequence = input_amino_acid_sequence.upper()
+		inner = True
+		while inner == True:
+			for i in input_amino_acid_sequence:
+				if i in initial_data.amino_acid_codons:
+					pass
+				else:
+					inner = False
+					valid = False
+			if inner == True:
+				valid = True
+			break
+	return input_amino_acid_sequence
+
 # Find the number of possible codon combinations for a particular amino acid sequence
 # Return integer
 def numCombinations(amino_acid_sequence):
@@ -140,10 +170,14 @@ def threadRequests(dic):
 
 def main():
 
-	input_amino_acid_sequence = input("Enter amino acid squence (q to quit): ")
-	input_amino_acid_sequence = input_amino_acid_sequence.upper()
+	input_amino_acid_sequence = getAminoAcid()
+	# while valid == False:
+	# 	print("---- ERROR: Invalid amino acid sequence ----\nEnter a string of characters with no spaces that correspond to conventional amino acid symbols.\n")
+	# 	input_amino_acid_sequence = input("Enter amino acid sequence (0 to quit): ")
+	# 	valid = getAminoAcid(input_amino_acid_sequence)
+	# input_amino_acid_sequence = input_amino_acid_sequence.upper()
 
-	while input_amino_acid_sequence != "Q":
+	while input_amino_acid_sequence != "0":
 		# Mark start time for processing (finding matches)
 		start_time = time.time()
 		print("\nSearching for possible restriction enzymes...")
@@ -212,6 +246,6 @@ def main():
 			print("Results written to: " + fname)
 
 		# Ask for another amino acid sequence
-		input_amino_acid_sequence = input("\nEnter amino acid squence (q to quit): ")
-		input_amino_acid_sequence = input_amino_acid_sequence.upper()
+		print()
+		input_amino_acid_sequence = getAminoAcid()
 main()
