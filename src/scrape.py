@@ -52,20 +52,6 @@ def initNebHrefDict():
 			neb_href[neb_total_list[i + 1].a.string] = "https://www.neb.com" + neb_total_list[i + 1].a["href"]
 	return neb_href
 
-# Return a list of tuples (size 2) with enzyme name as first element and href as second
-def initNebHrefList():
-	global neb_url
-	neb_initial_soup = getSoup(neb_url)
-	neb_total_list = neb_initial_soup.table.find_all("td")
-	neb_href = []
-	for i in range(0,len(neb_total_list),2):
-		if multipleA(neb_total_list[i + 1]):
-			for j in neb_total_list[i + 1].find_all('a'):
-				neb_href.append((j.string, "https://www.neb.com" + j["href"]))
-		else:
-			neb_href.append((neb_total_list[i + 1].a.string, "https://www.neb.com" + neb_total_list[i + 1].a["href"]))
-	return neb_href
-
 # Store enzyme name to key of dictionary and (unit size, enzyme price) to value. To be called by multithreading function.
 # Requests the page of a given url from initNebHrefDict as defined by the parameter and adds the value to the price dictionary.
 def initNebPriceDict(name):

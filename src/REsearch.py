@@ -171,11 +171,6 @@ def threadRequests(dic):
 def main():
 
 	input_amino_acid_sequence = getAminoAcid()
-	# while valid == False:
-	# 	print("---- ERROR: Invalid amino acid sequence ----\nEnter a string of characters with no spaces that correspond to conventional amino acid symbols.\n")
-	# 	input_amino_acid_sequence = input("Enter amino acid sequence (0 to quit): ")
-	# 	valid = getAminoAcid(input_amino_acid_sequence)
-	# input_amino_acid_sequence = input_amino_acid_sequence.upper()
 
 	while input_amino_acid_sequence != "0":
 		# Mark start time for processing (finding matches)
