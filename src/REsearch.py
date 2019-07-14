@@ -145,9 +145,9 @@ def getMatches(codon_list, enz_dic):
 def writeDictToFile(fname, dic, sequence):
 	with open(fname, "w") as file:
 		file.write("Amino acid sequence entered: " + sequence + "\n\n")
-		file.write("%-15s%-15s%-15s%-15s\n____________________________________________________________\n\n" %("Enzyme:", "Sequence:", "Size:", "Price"))
+		file.write("%-15s%-21s%-15s%-15s\n____________________________________________________________\n\n" %("Enzyme:", "Sequence:", "Size:", "Price"))
 		for x, y in dic.items():
-			file.write("%-15s%-15s%-15s%-15s\n____________________________________________________________\n\n" %(x + ":", y[0], y[1], y[2]))
+			file.write("%-15s%-21s%-15s%-15s\n____________________________________________________________\n\n" %(x + ":", y[0], y[1], y[2]))
 
 # Create N threads for requesting pages as defined in scrape.initNebPriceDict,
 # where N is the number of items in the final dictionary.
@@ -221,9 +221,9 @@ def main():
 		del neb_price
 
 		# Display to user
-		print("%-15s%-15s%-15s%-15s\n____________________________________________________________\n" %("Enzyme:", "Sequence:", "Size:", "Price:"))
+		print("%-15s%-21s%-15s%-15s\n____________________________________________________________\n" %("Enzyme:", "Sequence:", "Size:", "Price:"))
 		for x, y in final_dict.items():
-			print("%-15s%-15s%-15s%-15s\n____________________________________________________________\n" %(x + ":", y[0], y[1], y[2]))
+			print("%-15s%-21s%-15s%-15s\n____________________________________________________________\n" %(x + ":", y[0], y[1], y[2]))
 
 		# Check to see if final_dict should be written to a file. If so, write to file.
 		ask_to_write = input("Would you like to write the results to a file (Y/n)? ")
