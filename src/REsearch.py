@@ -131,15 +131,30 @@ def delEmptyKeys(dic):
 		del dic[i]
 
 # Check all enzyme recognition sequence combinations against all codon combinations
-# Return dictionary with enzyme name as key and codon combination as value
-def getMatches(codon_list, enz_dic):
-	final_dict = {}
+# Final_dict should be an empty dictionary with elements being added by this function
+# To be called in threadMatches
+def getMatches(codon_list, enz_dic, final_dict):
 	for i in codon_list:
 		for k in enz_dic:
 			for v in enz_dic[k]:
 				if v in i:
 					final_dict[k] = i
-	return final_dict
+
+# Multithread the matching process by spliting the possible codon list into four chunks
+# numThreads should be 4
+def threadMatches(codon_list, enz_dic, final_dict, numThreads=4):
+	threads = []
+	split = len(codon_list) // numThreads
+	for i in range(numThreads):
+		if i < numThreads - 1:
+			splitList = codon_list[split*i:split*(i+1)]
+		else:
+			splitList = codon_list[split*i:]
+		t = threading.Thread(target=getMatches, args=(codon_list, enz_dic, final_dict,))
+		t.start()
+		threads.append(t)
+	for t in threads:
+		t.join()
 
 # Write dictionary to a text file in format
 def writeDictToFile(fname, dic, sequence):
@@ -196,7 +211,8 @@ def main():
 		delEmptyKeys(absolute_mod_enz_seqs)
 
 		# Add matches to a final dictionary
-		final_dict = getMatches(codon_comb_list, absolute_mod_enz_seqs)
+		final_dict = {}
+		threadMatches(codon_comb_list, absolute_mod_enz_seqs, final_dict)
 		# Total processing time for finding enzymes
 		elapsed_time = time.time() - start_time
 		print("---- Found %2d applicable enzyme(s) in %.3f seconds ----\n" %(len(final_dict), elapsed_time))
