@@ -194,8 +194,7 @@ def main():
 
 		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, initial_data.amino_acid_codons))
 
-		neb_enz_seq = scrape.initNebSeqDict()
-		mod_enz_seqs = sanitizeSequences(neb_enz_seq)
+		mod_enz_seqs = initial_data.mod_enz_seqs
 
 		# Narrow down possible enzymes based on length of amino acid sequence
 		eliminateEnzymeByLength(mod_enz_seqs, input_amino_acid_sequence)
