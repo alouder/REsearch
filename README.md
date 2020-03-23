@@ -1,6 +1,22 @@
 # REsearch
-Finding viable restriction enzymes from NEB given an amino acid sequence.
+Finding viable restriction enzymes from NEB given an amino acid sequence.  
 *Requires Python 3.x*
+
+### Using the Program
+Enter the amino acid sequence which will represent a range of bases in which cleaving should be performed.  
+
+The program will first generate all possible codon combinations given that aimino acid sequence.
+  
+The program will then search through all of the restriction enzymes that are provided by the vendor, NEB, and return  
+a list of enzymes that have restriction sites aligned with inputted amino acid sequence.  
+
+Return values include: 
+ - The enzyme name
+ - The recognition sequence of the enzyme
+ - The matching DNA sequence, corresponding to the inputted amino acid sequence
+ 
+This program is designed such that you only need to enter an amino acid sequence. All amino acids entered are preserved when a DNA sequence that matches a restricion enzyme's cut site is suggested. You will need to compare the suggested DNA a sequence(s) to your 
+specific sequence to determine if the strand needs to be edited.
 
 ## Development Setup
 
