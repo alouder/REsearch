@@ -134,11 +134,14 @@ def delEmptyKeys(dic):
 # Final_dict should be an empty dictionary with elements being added by this function
 # To be called in threadMatches
 def getMatches(codon_list, enz_dic, final_dict):
-	for i in codon_list:
-		for k in enz_dic:
-			for v in enz_dic[k]:
+	for k in enz_dic:
+		for v in enz_dic[k]:
+			tempMatchList = []
+			for i in codon_list:
 				if v in i:
-					final_dict[k] = i
+					tempMatchList.append(i)
+			if len(tempMatchList) > 0:
+				final_dict[k] = tempMatchList
 
 # Multithread the matching process by spliting the possible codon list into four chunks
 # numThreads should be 4
