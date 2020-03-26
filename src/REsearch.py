@@ -235,7 +235,7 @@ if __name__ == "__main__":
 		# del neb_price
 
 		# Display to user
-		print("%-15s%-21s%-15s%-15s\n____________________________________________________________\n" %("Enzyme:", "Sequence:", "Size:", "Price:"))
+		print("%-30s%-21s%-15s%-15s\n____________________________________________________________\n" %("Enzyme - Rec. Sequence:", "Matched Sequence:", "Size:", "Price:"))
 		for x, y in final_dict.items():
 			print("%-15s%-21s\n" %(x + ":", y[0]))#[0], y[1], y[2]))
 			for seq in range(1, len(y)):
