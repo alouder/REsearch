@@ -237,7 +237,11 @@ if __name__ == "__main__":
 		# Display to user
 		print("%-15s%-21s%-15s%-15s\n____________________________________________________________\n" %("Enzyme:", "Sequence:", "Size:", "Price:"))
 		for x, y in final_dict.items():
-			print("%-15s%-21s\n____________________________________________________________\n" %(x + ":", y))#[0], y[1], y[2]))
+			print("%-15s%-21s\n" %(x + ":", y[0]))#[0], y[1], y[2]))
+			for seq in range(1, len(y)):
+				print("%-15s%-21s\n" %(" ", y[seq]))#[0], y[1], y[2]))
+				if seq == len(y) - 1:
+					print("%-15s%-21s\n____________________________________________________________\n" %(" ", y[seq]))
 
 		# Check to see if final_dict should be written to a file. If so, write to file.
 		ask_to_write = input("Would you like to write the results to a file (Y/n)? ")
