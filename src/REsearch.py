@@ -235,13 +235,14 @@ if __name__ == "__main__":
 		# del neb_price
 
 		# Display to user
-		print("%-30s%-21s%-15s%-15s\n____________________________________________________________\n" %("Enzyme - Rec. Sequence:", "Matched Sequence:", "Size:", "Price:"))
+		print("%-30s%-30s%-30s%-30s\n____________________________________________________________________________________________________\n" %("Enzyme - (Rec. Sequence):", "Matched Sequence:", "Size:", "Price:"))
 		for x, y in final_dict.items():
-			print("%-15s%-21s\n" %(x + ":", y[0]))#[0], y[1], y[2]))
-			for seq in range(1, len(y)):
-				print("%-15s%-21s\n" %(" ", y[seq]))#[0], y[1], y[2]))
-				if seq == len(y) - 1:
-					print("%-15s%-21s\n____________________________________________________________\n" %(" ", y[seq]))
+			for seq in range(0, len(y)):
+				if seq == 0:
+					print("%-30s%-30s\n" %(x + " - " + "(" + initial_data.mod_enz_seqs[x] + ")" + ":", y[0]))#[0], y[1], y[2]))
+				else:
+					print("%-30s%-30s\n" %("", y[0]))#[0], y[1], y[2]))
+			print("____________________________________________________________________________________________________\n")
 
 		# Check to see if final_dict should be written to a file. If so, write to file.
 		ask_to_write = input("Would you like to write the results to a file (Y/n)? ")
