@@ -163,9 +163,14 @@ def threadMatches(codon_list, enz_dic, final_dict, numThreads=4):
 def writeDictToFile(fname, dic, sequence):
 	with open(fname, "w") as file:
 		file.write("Amino acid sequence entered: " + sequence + "\n\n")
-		file.write("%-15s%-21s%-15s%-15s\n____________________________________________________________\n\n" %("Enzyme:", "Sequence:", "Size:", "Price"))
+		file.write("%-30s%-30s%-30s%-30s\n____________________________________________________________________________________________________\n\n" %("Enzyme - (Rec. Sequence):", "Sequence:", "Size:", "Price"))
 		for x, y in dic.items():
-			file.write("%-15s%-21s%-15s%-15s\n____________________________________________________________\n\n" %(x + ":", y[0], y[1], y[2]))
+			for seq in range(0, len(y)):
+				if seq == 0:
+					file.write("%-30s%-30s\n" %(x + " - " + "(" + initial_data.mod_enz_seqs[x] + ")" + ":", y[0]))#[0], y[1], y[2]))
+				else:
+					file.write("%-30s%-30s\n" %("", y[0]))#[0], y[1], y[2]))
+			file.write("____________________________________________________________________________________________________\n")
 
 # Create N threads for requesting pages as defined in scrape.initNebPriceDict,
 # where N is the number of items in the final dictionary.
