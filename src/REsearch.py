@@ -1,6 +1,6 @@
 from itertools import product
 from os.path import expanduser
-import threading, platform, time, re, test, scrape, immutable
+import threading, platform, time, re, scrape, immutable
 
 # Establish instance of Immutable class in immutable.py for accessing inititial data sets
 initial_data = immutable.Immutable()
@@ -133,15 +133,35 @@ def delEmptyKeys(dic):
 # Check all enzyme recognition sequence combinations against all codon combinations
 # Final_dict should be an empty dictionary with elements being added by this function
 # To be called in threadMatches
-def getMatches(codon_list, enz_dic, final_dict):
+def getMatches(codon_list, enz_dic, final_dict, minResSiteLen=0):
 	for k in enz_dic:
 		for v in enz_dic[k]:
-			tempMatchList = []
-			for i in codon_list:
-				if v in i:
-					tempMatchList.append(i)
-			if len(tempMatchList) > 0:
-				final_dict[k] = tempMatchList
+			if not len(v) < minResSiteLen:
+				tempMatchList = []
+				for i in codon_list:
+					if 'N' in i:
+						for base in range(len(sequence)):
+							match = True
+							for enzBase in range(len(v)):
+								if (base + enzBase) > len(sequence) - 1:
+									match = False
+									break
+								if v[enzBase] != 'N':
+									if v[enzBase] != sequence[base + enzBase]:
+										match = False
+										break
+							if match == True:
+								if k in finalDict:
+									if sequence not in finalDict[k]:
+										finalDict[k].append(sequence)
+								else:
+									finalDict[k] = []
+									finalDict[k].append(sequence)
+					else:
+						if v in i:
+							tempMatchList.append(i)
+				if len(tempMatchList) > 0:
+					final_dict[k] = tempMatchList
 
 # Multithread the matching process by spliting the possible codon list into four chunks
 # numThreads should be 4
@@ -153,7 +173,7 @@ def threadMatches(codon_list, enz_dic, final_dict, numThreads=4):
 			splitList = codon_list[split*i:split*(i+1)]
 		else:
 			splitList = codon_list[split*i:]
-		t = threading.Thread(target=getMatches, args=(codon_list, enz_dic, final_dict,))
+		t = threading.Thread(target=getMatches, args=(codon_list, enz_dic, final_dict, 6,))
 		t.start()
 		threads.append(t)
 	for t in threads:
@@ -167,21 +187,20 @@ def writeDictToFile(fname, dic, sequence):
 		for x, y in dic.items():
 			for seq in range(0, len(y)):
 				if seq == 0:
-					file.write("%-30s%-30s\n" %(x + " - " + "(" + initial_data.mod_enz_seqs[x] + ")" + ":", y[0]))#[0], y[1], y[2]))
+					file.write("%-30s%-30s\n" %(x + " - " + "(" + initial_data.mod_enz_seqs[x] + ")" + ":", y))#[0], y[1], y[2]))
 				else:
-					file.write("%-30s%-30s\n" %("", y[0]))#[0], y[1], y[2]))
+					file.write("%-30s%-30s\n" %("", y))#[0], y[1], y[2]))
 			file.write("____________________________________________________________________________________________________\n")
 
-# Create N threads for requesting pages as defined in scrape.initNebPriceDict,
-# where N is the number of items in the final dictionary.
-# def threadRequests(dic):
-# 	threads = []
-# 	for name in dic:
-# 		t = threading.Thread(target=scrape.initNebPriceDict, args=(name,))
-# 		t.start()
-# 		threads.append(t)
-# 	for t in threads:
-# 		t.join()
+def printOutput(finalDict, enzSeq):
+	print("%-30s%-30s\n____________________________________________________________________________________________________\n" %("Enzyme - (Rec. Sequence):", "Matched Sequence:"))
+	for x, y in final_dict.items():
+		for seq in range(0, len(y)):
+			if seq == 0:
+				print("%-30s%-30s\n" %(x + " - " + "(" + enzSeq[x] + ")" + ":", y[seq]))
+			else:
+				print("%-30s%-30s\n" %("", y[seq]))
+		print("____________________________________________________________________________________________________\n")
 
 #
 #
@@ -201,6 +220,8 @@ if __name__ == "__main__":
 		print("\nSearching for possible restriction enzymes...")
 
 		codon_comb_list = joinTuplesList("", buildPossibleSequences(input_amino_acid_sequence, initial_data.amino_acid_codons))
+
+		print(len(codon_comb_list))
 
 		mod_enz_seqs = initial_data.mod_enz_seqs
 
@@ -223,31 +244,11 @@ if __name__ == "__main__":
 		# Total processing time for finding enzymes
 		elapsed_time = time.time() - start_time
 		print("---- Found %2d applicable enzyme(s) in %.3f seconds ----\n" %(len(final_dict), elapsed_time))
-		
-		# print("Searching for prices of enzymes...")
-		# # Mark start time for finding prices
-		# start_time = time.time()
-		# # threadRequests(final_dict)
-		# # Get prices of only the enzymes in final dictionary
-		# # neb_price = scrape.neb_price
-		# # Total processing time for finding prices
-		# elapsed_time = time.time() - start_time
-		# print("---- Found prices for %2d enzymes in %.3f seconds ----\n" %(len(final_dict), elapsed_time))
-
-		# Combine enzyme/sequence dictionary and enzyme/price dictionary
-		# for i in final_dict:
-		# 	final_dict[i] = (final_dict[i], neb_price[i][0], neb_price[i][1])
-		# del neb_price
+	
 
 		# Display to user
-		print("%-30s%-30s%-30s%-30s\n____________________________________________________________________________________________________\n" %("Enzyme - (Rec. Sequence):", "Matched Sequence:", "Size:", "Price:"))
-		for x, y in final_dict.items():
-			for seq in range(0, len(y)):
-				if seq == 0:
-					print("%-30s%-30s\n" %(x + " - " + "(" + initial_data.mod_enz_seqs[x] + ")" + ":", y[0]))#[0], y[1], y[2]))
-				else:
-					print("%-30s%-30s\n" %("", y[0]))#[0], y[1], y[2]))
-			print("____________________________________________________________________________________________________\n")
+		#printOutput(final_dict, initial_data.mod_enz_seqs)
+		
 
 		# Check to see if final_dict should be written to a file. If so, write to file.
 		ask_to_write = input("Would you like to write the results to a file (Y/n)? ")

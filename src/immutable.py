@@ -46,7 +46,7 @@ class Immutable:
 		"D": ["A", "G", "T"],
 		"H": ["A", "C", "T"],
 		"V": ["A", "C", "G"],
-		"N": ["G", "C", "A", "T"]
+		"N": ["N"]
 	}
 	mod_enz_seqs = {
 		"AclI": "AACGTT",
